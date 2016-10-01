@@ -17,18 +17,14 @@ class QuotesSpider(scrapy.Spider):
         'https://wiki.archlinux.org/',
     ]
     
-
+    
     def parse(self, response):
         content = response.css('#content')
 
-        yield {
-            'content': stem("factionally")
-        }
-
-        yield {
-            
-            'content': content.css('p *::text').re(r'\w+')
-        }
+        for word in content.css('p *::text').re(r'\w+'):
+            yield {
+                'content': stem( word )
+            }
         
         yield {
             'hrefs':content.css('a[href]::text')
