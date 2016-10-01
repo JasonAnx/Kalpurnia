@@ -1,1 +1,4 @@
 /webSearch/webSearch/spiders/sd.json
+/webSearch/webSearch/spiders/*.pyc
+/webSearch/*.pyc
+/webSearch/webSearch/*.pyc
