@@ -19,7 +19,7 @@ class QuotesSpider(scrapy.Spider):
         }
         
         yield {
-            'content':content.css('a[href]::text')
+            'hrefs':content.css('a[href]::text')
         }
         
         yield {
