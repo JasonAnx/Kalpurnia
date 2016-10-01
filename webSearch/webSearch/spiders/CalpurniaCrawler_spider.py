@@ -1,21 +1,33 @@
 from urllib2 import urlopen
 import scrapy
+import os
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
+from stemming.porter2 import stem
 
 
 class QuotesSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
     
+    
+    #os.remove("*.json")
+    #print("File Removed!")
+
     start_urls = [
-        'https://en.wikipedia.org/wiki/Calpurnia_(wife_of_Caesar)',
+        'https://wiki.archlinux.org/',
     ]
+    
 
     def parse(self, response):
         content = response.css('#content')
-        
+
         yield {
-            'content':content.css('p *::text').re(r'\w+')
+            'content': stem("factionally")
+        }
+
+        yield {
+            
+            'content': content.css('p *::text').re(r'\w+')
         }
         
         yield {
