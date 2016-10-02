@@ -1,6 +1,7 @@
 from scrapy.spiders import BaseSpider
 from urllib2 import urlopen
 import scrapy
+from scrapy import Request
 import os
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
@@ -12,8 +13,9 @@ class CalpurniaSpider(scrapy.Spider):
     allowed_domains = ["wiki.archlinux.org"]
     start_urls = ['https://wiki.archlinux.org/']
 
-    indexId = 1    
+    
     URLsDiccc = {}
+    indexId = 1
 
     #os.remove("*.json")
     #print("File Removed!")s
@@ -27,6 +29,7 @@ class CalpurniaSpider(scrapy.Spider):
         return
     
     
+        
     def parse(self, response):
         
         #yield {
@@ -47,9 +50,11 @@ class CalpurniaSpider(scrapy.Spider):
         
 
         next_page = "https://wiki.archlinux.org/"
-        
-        
-        self.tokenizeDoc(response)
+
+        yield Request(next_page, callback = self.getUrls     )
+
+        yield Request(next_page, callback = self.tokenizeDoc )
+
         
 
         return
@@ -70,18 +75,21 @@ class CalpurniaSpider(scrapy.Spider):
         #}
         return
 
+    
+      
     def getUrls (self, response):
-        global indexId
-        global URLsDiccc
+
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
-            URLsDiccc[ indexId ] = ref
+            self.URLsDiccc[ self.indexId ] = ref
+            self.indexId = self.indexId + 1    
             yield {
                 'hrefs': ref 
             };
+        
+        #print( self.URLsDiccc ) 
 
-        print ( "URLsDiccc:" )
-        print ( URLsDiccc ) 
+ 
 
         return
         
