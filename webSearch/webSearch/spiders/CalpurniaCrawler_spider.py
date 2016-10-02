@@ -1,6 +1,7 @@
 from scrapy.spiders import BaseSpider
 from urllib2 import urlopen
 import scrapy
+import Queue
 from scrapy import Request
 import os
 from scrapy.selector import Selector
@@ -31,66 +32,31 @@ class CalpurniaSpider(scrapy.Spider):
     
         
     def parse(self, response):
-        
-        #yield {
-        #    'content':response.css('a').xpath('@href').extract()
-        #}
-
-        #yield {
-        #        'url': response.url
-        #    };
-#
-#
-#
-        #hrefs = response.css('a').xpath('@href').extract()
-        #for ref in hrefs:
-        #    yield {
-        #        'hrefs': ref 
-        #    };
-        
-
         next_page = "https://wiki.archlinux.org/"
 
-        yield Request(next_page, callback = self.getUrls     )
 
-        yield Request(next_page, callback = self.tokenizeDoc )
-
-        
-
-        return
-
-    def tokenizeDoc (self, response):
-        print("SUCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCc")
-        content = response.css('#content')
-
-        #"https://www.archlinux.org/"
-
-        for word in content.css('p *::text').re(r'\w+'):
-            yield {
-                'content': stem( word )
-            }
-        
-        #yield {
-        #    'hrefs':content.css('a[href]::text')
-        #}
-        return
-
-    
-      
-    def getUrls (self, response):
+        if not response.url in self.URLsDiccc.keys():        
+            self.URLsDiccc[ response.url ] = self.indexId
+            self.indexId = self.indexId + 1
+            content = response.css('#content')
+            for word in content.css('p *::text').re(r'\w+'):
+                yield {
+                    response.url: stem( word )
+                } 
 
         hrefs = response.css('a').xpath('@href').extract()
+
         for ref in hrefs:
-            self.URLsDiccc[ self.indexId ] = ref
-            self.indexId = self.indexId + 1    
-            yield {
-                'hrefs': ref 
-            };
-        
-        #print( self.URLsDiccc ) 
+            if not ref.startswith( "https://wiki.archlinux.org/"):
+                print( "\ndroped url " + ref + "\n")
+            else:
+                if ref in self.URLsDiccc.keys():
+                    print("omiting already parsed page from hrefs found")
+                else:
+                    print( "\n\n next page: " + ref  + "\n\n" )
+                    yield Request(ref, callback=self.parse)
 
- 
-
-        return
-        
-
+    
+    
+      
+    
