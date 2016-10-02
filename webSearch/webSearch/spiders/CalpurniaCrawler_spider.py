@@ -1,4 +1,4 @@
-from scrapy.spider import BaseSpider
+from scrapy.spiders import BaseSpider
 from urllib2 import urlopen
 import scrapy
 import os
@@ -7,12 +7,14 @@ from scrapy.http import HtmlResponse
 from stemming.porter2 import stem
 
 
-class QuotesSpider(scrapy.Spider):
+class CalpurniaSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
     allowed_domains = ["wiki.archlinux.org"]
     start_urls = ['https://wiki.archlinux.org/']
-    
-    
+
+    indexId = 1    
+    URLsDiccc = {}
+
     #os.remove("*.json")
     #print("File Removed!")s
 
@@ -42,18 +44,18 @@ class QuotesSpider(scrapy.Spider):
         #    yield {
         #        'hrefs': ref 
         #    };
+        
 
         next_page = "https://wiki.archlinux.org/"
-        yield scrapy.Request(next_page, callback = self.tokenizeDoc)
+        
+        
+        self.tokenizeDoc(response)
+        
 
-
-        #next_page = response.css('li.next a::attr(href)').extract_first()
-        #if next_page is not None:
-        #    next_page = response.urljoin(next_page)
-        #    yield scrapy.Request(next_page, callback = self.parse)
         return
 
     def tokenizeDoc (self, response):
+        print("SUCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCc")
         content = response.css('#content')
 
         #"https://www.archlinux.org/"
@@ -67,3 +69,20 @@ class QuotesSpider(scrapy.Spider):
         #    'hrefs':content.css('a[href]::text')
         #}
         return
+
+    def getUrls (self, response):
+        global indexId
+        global URLsDiccc
+        hrefs = response.css('a').xpath('@href').extract()
+        for ref in hrefs:
+            URLsDiccc[ indexId ] = ref
+            yield {
+                'hrefs': ref 
+            };
+
+        print ( "URLsDiccc:" )
+        print ( URLsDiccc ) 
+
+        return
+        
+
