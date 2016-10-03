@@ -12,6 +12,12 @@ from scrapy.xlib.pydispatch import dispatcher
 import time # sleep ( n secons )
 
 
+
+#import re
+#pattern = re.compile("^([A-Z][0-9]+)*$")
+#pattern.match(string)
+
+
 class CalpurniaSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
     allowed_domains = ["wiki.archlinux.org"]
@@ -75,7 +81,7 @@ class CalpurniaSpider(scrapy.Spider):
 
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
-            if ref.startswith( "https://wiki.archlinux") or ref.startswith( "http://wiki.archlinux"):
+            if ref.startswith( "https://") or ref.startswith( "http://"):
                 if ref in self.URLsDiccc.keys():
                     print("\nomiting already parsed page from hrefs found")
                 else:
@@ -86,7 +92,7 @@ class CalpurniaSpider(scrapy.Spider):
                 if URL.endswith("\\"):
                     URL = URL[:-1]
                 print("\nlocal path found: " + URL + ref )
-                yield Request( URL + ref, callback=self.parse)
+                #yield Request( URL + ref, callback=self.parse)
             else:
                 print( "\ndroped url " + ref)
         #imprime el diccionario palabra - set ------> postings
