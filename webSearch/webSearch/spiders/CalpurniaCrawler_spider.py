@@ -1,5 +1,6 @@
 from scrapy.spiders import BaseSpider
 from urllib2 import urlopen
+from urlparse import urlparse
 import scrapy
 import Queue
 from scrapy import Request
@@ -53,19 +54,22 @@ class CalpurniaSpider(scrapy.Spider):
             os.remove(f)
         os.system('cls' if os.name == 'nt' else 'clear')
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
-        print("Staring in 3 seconds")
+        print("Starting in 4 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Staring in 2 seconds")
+        print("Starting in 3 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Staring in 1 seconds")
+        print("Starting in 2 seconds")
+        time.sleep(1)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Starting in 1 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
         return
         
     def parse(self, response):
-        print("Started parding " + response.url )
+        print("Started parsing " + response.url )
         if not response.url in self.URLsDiccc.keys():        
             self.URLsDiccc[ response.url ] = self.indexId
             self.indexId +=  1
@@ -80,9 +84,9 @@ class CalpurniaSpider(scrapy.Spider):
                 # este o no en el diccionario, si la encontro, tiene que agregarla a
                 # la lista de postings. Asociada al documento.  
                 self.termDiccc[stemmedword].add(self.indexId-1)
-                yield {
-                    response.url: stemmedword
-                }
+                #yield {
+                #    response.url: stemmedword
+                #}
 
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
@@ -92,12 +96,18 @@ class CalpurniaSpider(scrapy.Spider):
                 else:
                     print( "\n\n next page: " + ref  + "\n\n" )
                     yield Request(ref, callback=self.parse)
-            elif ref.startswith( "/" ):
-                URL = response.url
-                if URL.endswith("\\"):
-                    URL = URL[:-1]
-                print("\nlocal path found: " + URL + ref )
-                #yield Request( URL + ref, callback=self.parse)
+            elif ref.startswith( "/" ): # --> its a relative path ------
+                # if we're actually in ..org/KDEPLASMA and foud a relative
+                # path /PACMAN, we must go to ..org/PACMAN, not to 
+                # ..org/KDEPLASMA/PACMAN, so we can't just append new refs  
+                parsed_uri = urlparse(response.url)
+                domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+                # -------------------------------------------------------
+                if domain.endswith("/"):
+                    domain = domain[:-1]
+                next_page = domain + ref
+                print("\nrelative path found: " + next_page )
+                #yield Request( next_page, callback=self.parse)
             else:
                 print( "\ndroped url " + ref)
         #imprime el diccionario palabra - set ------> postings
@@ -109,6 +119,10 @@ class CalpurniaSpider(scrapy.Spider):
             json.dump(self.termDiccc,fp, sort_keys=True, default=set_default) #indent = 4
         with open('urls.json', 'wb') as fp:
             json.dump(self.URLsDiccc,fp, indent = 4) 
+        
+        print ( "\n\nFinal Results: " )
+        #print ( "\n\tPostings dicc size: " + self.termDiccc  ?? size() )
+         
         # with open('postings.json') as data_file:    
         #     data = json.load(data_file)
         # print data
