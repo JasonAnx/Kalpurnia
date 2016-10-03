@@ -18,6 +18,11 @@ class CalpurniaSpider(scrapy.Spider):
     URLsDiccc = {}
     indexId = 1
 
+    DEFAULT_REQUEST_HEADERS = {
+       'Accept': 'text/html',
+       'Accept-Language': 'en'
+    }
+
     #os.remove("*.json")
     #print("File Removed!")s
 
@@ -26,15 +31,14 @@ class CalpurniaSpider(scrapy.Spider):
     ]
 
     def __init__(self, **kw):
-        print("sadfasdf")
+        print("INICIO")
+        filelist = [ f for f in os.listdir(".") if f.endswith(".json") ]
+        for f in filelist:
+            os.remove(f)
+        os.system('cls' if os.name == 'nt' else 'clear')
         return
-    
-    
         
     def parse(self, response):
-        next_page = "https://wiki.archlinux.org/"
-
-
         if not response.url in self.URLsDiccc.keys():        
             self.URLsDiccc[ response.url ] = self.indexId
             self.indexId = self.indexId + 1
