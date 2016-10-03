@@ -1,8 +1,4 @@
-# TP1-CI2414
-Índice en motor de búsqueda web
+# Índice en motor de búsqueda web [TP1-CI2414]
 
-Correr con 
-    scrapy crawl [nombreAraña]
-
-para guardar los resultados de la araña en un .json
-    scrapy crawl [nombreAraña] -o [unNombre].json
+para guardar los resultados de la araña en un .json:
+'scrapy crawl spidername -o items.json -t json'
