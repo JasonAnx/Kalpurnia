@@ -7,8 +7,8 @@ import os # clear console, delete/open files
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from stemming.porter2 import stem
-from scrapy import signals
-from scrapy.xlib.pydispatch import dispatcher
+# from scrapy import signals
+# from scrapy.xlib.pydispatch import dispatcher
 import time # sleep ( n secons )
 import json
 
@@ -52,7 +52,7 @@ class CalpurniaSpider(scrapy.Spider):
         for f in filelist:
             os.remove(f)
         os.system('cls' if os.name == 'nt' else 'clear')
-        dispatcher.connect(self.SpiderKilled, signals.spider_closed)
+        # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
         print("Staring in 3 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -107,7 +107,8 @@ class CalpurniaSpider(scrapy.Spider):
         # print self.termDiccc
         with open('postings.json', 'wb') as fp:
             json.dump(self.termDiccc,fp, sort_keys=True, default=set_default) #indent = 4
-        
+        with open('urls.json', 'wb') as fp:
+            json.dump(self.URLsDiccc,fp, indent = 4) 
         # with open('postings.json') as data_file:    
         #     data = json.load(data_file)
         # print data
