@@ -3,16 +3,19 @@ from urllib2 import urlopen
 import scrapy
 import Queue
 from scrapy import Request
-import os
+import os # clear console, delete/open files 
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from stemming.porter2 import stem
+from scrapy import signals
+from scrapy.xlib.pydispatch import dispatcher
+import time # sleep ( n secons )
 
 
 class CalpurniaSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
     allowed_domains = ["wiki.archlinux.org"]
-    start_urls = ['https://wiki.archlinux.org/']
+
 
     
     URLsDiccc = {}
@@ -24,7 +27,7 @@ class CalpurniaSpider(scrapy.Spider):
     }
 
     termDiccc = {}
-    
+
     #os.remove("*.json")
     #print("File Removed!")s
 
@@ -38,9 +41,20 @@ class CalpurniaSpider(scrapy.Spider):
         for f in filelist:
             os.remove(f)
         os.system('cls' if os.name == 'nt' else 'clear')
+        dispatcher.connect(self.SpiderKilled, signals.spider_closed)
+        print("Staring in 3 seconds")
+        time.sleep(1)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Staring in 2 seconds")
+        time.sleep(1)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Staring in 1 seconds")
+        time.sleep(1)
+        os.system('cls' if os.name == 'nt' else 'clear')
         return
         
     def parse(self, response):
+        print("Started parding " + response.url )
         if not response.url in self.URLsDiccc.keys():        
             self.URLsDiccc[ response.url ] = self.indexId
             self.indexId +=  1
@@ -48,10 +62,12 @@ class CalpurniaSpider(scrapy.Spider):
 
             for word in content.css('p *::text').re(r'\w+'):
                 stemmedword = stem(word) #aplica stemming a cada palabra
-                # si la palabra no existe en el diciconario de postings, la agrega, y la empareja con un set vacio
+                # si la palabra no existe en el diciconario de postings, 
+                # la agrega, y la empareja con un set vacio
                 if stemmedword not in self.termDiccc:
                     self.termDiccc[stemmedword] = set()
-                # este o no en el diccionario, si la encontro, tiene que agregarla a la lista de postings. Asociada al documento.  
+                # este o no en el diccionario, si la encontro, tiene que agregarla a
+                # la lista de postings. Asociada al documento.  
                 self.termDiccc[stemmedword].add(self.indexId-1)
                 yield {
                     response.url: stemmedword
@@ -59,16 +75,24 @@ class CalpurniaSpider(scrapy.Spider):
 
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
-            if not ref.startswith( "https://wiki.archlinux.org/"):
-                print( "\ndroped url " + ref + "\n")
-            else:
+            if ref.startswith( "https://wiki.archlinux") or ref.startswith( "http://wiki.archlinux"):
                 if ref in self.URLsDiccc.keys():
-                    print("omiting already parsed page from hrefs found")
+                    print("\nomiting already parsed page from hrefs found")
                 else:
                     print( "\n\n next page: " + ref  + "\n\n" )
                     yield Request(ref, callback=self.parse)
+            elif ref.startswith( "/" ):
+                URL = response.url
+                if URL.endswith("\\"):
+                    URL = URL[:-1]
+                print("\nlocal path found: " + URL + ref )
+                yield Request( URL + ref, callback=self.parse)
+            else:
+                print( "\ndroped url " + ref)
         #imprime el diccionario palabra - set ------> postings
-        print self.termDiccc
+        #print self.termDiccc
     
       
-    
+    def SpiderKilled(self, spider):
+      # second param is instance of spder about to be closed.
+      print("\n\n la wea finalizada !!!!!!\n\n")
