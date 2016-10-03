@@ -10,7 +10,12 @@ from stemming.porter2 import stem
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
 import time # sleep ( n secons )
+import json
 
+def set_default(obj):
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError
 
 class CalpurniaSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
@@ -91,8 +96,16 @@ class CalpurniaSpider(scrapy.Spider):
                 print( "\ndroped url " + ref)
         #imprime el diccionario palabra - set ------> postings
         #print self.termDiccc
-    
-      
-    def SpiderKilled(self, spider):
-      # second param is instance of spder about to be closed.
-      print("\n\n la wea finalizada !!!!!!\n\n")
+
+    def closed(self, reason):
+        # print self.termDiccc
+        with open('postings.json', 'wb') as fp:
+            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default) #indent = 4
+        
+        # with open('postings.json') as data_file:    
+        #     data = json.load(data_file)
+        # print data
+
+    # def SpiderKilled(self, spider):
+    #   # second param is instance of spder about to be closed.
+    #   print("\n\n la wea finalizada !!!!!!\n\n")
