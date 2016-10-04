@@ -4,3 +4,4 @@
 /webSearch/webSearch/*.pyc
 
 *.pyc
+*.json

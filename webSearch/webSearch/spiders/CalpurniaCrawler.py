@@ -40,20 +40,17 @@ class CalpurniaSpider(scrapy.Spider):
 
     termDiccc = {}
 
-    #os.remove("*.json")
-    #print("File Removed!")s
-
     start_urls = [
         'https://wiki.archlinux.org/',
     ]
 
     def __init__(self, **kw):
         print("INICIO")
-        filelist = [ f for f in os.listdir(".") if f.endswith(".json") ]
-        for f in filelist:
-            os.remove(f)
-        os.system('cls' if os.name == 'nt' else 'clear')
+        #filelist = [ f for f in os.listdir(".") if f.endswith(".json") ]
+        #for f in filelist: 
+        #    os.remove(f)
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
+        os.system('cls' if os.name == 'nt' else 'clear')
         print("Starting in 4 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -77,7 +74,10 @@ class CalpurniaSpider(scrapy.Spider):
             content = response.css('#content')
 
             for word in content.css('p *::text').re(r'\w+'):
-                stemmedword = stem(word) #aplica stemming a cada palabra
+                #aplica stemming a cada palabra
+                stemmedword = word                  # Sin Stemming ni lowercase
+                #stemmedword = stem( word.lower() )  # Sin Stemming ni lowercase
+
                 # si la palabra no existe en el diciconario de postings, 
                 # la agrega, y la empareja con un set vacio
                 if stemmedword not in self.termDiccc:
@@ -114,9 +114,9 @@ class CalpurniaSpider(scrapy.Spider):
 
     def closed(self, reason):
         # print self.termDiccc
-        with open('postings.json', 'wb') as fp:
+        with open('postingsSinStemm.json', 'wb') as fp:
             json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4) #indent = 4
-        with open('urls.json', 'wb') as fp:
+        with open('urlsSinStemm.json', 'wb') as fp:
             json.dump(self.URLsDiccc,fp, indent = 4) 
         
         print ( "\n\nFinal Results: " )
