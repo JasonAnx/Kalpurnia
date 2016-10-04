@@ -66,12 +66,13 @@ class CalpurniaSpider(scrapy.Spider):
         print("Starting in 1 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
+        print("Parsing")
         return
         
     def parse(self, response):
-        print("Started parsing " + response.url )
-        if not response.url in self.URLsDiccc.keys():        
-            self.URLsDiccc[ response.url ] = self.indexId
+        #print("Started parsing " + response.url )
+        if not response.url in self.URLsDiccc.values():        
+            self.URLsDiccc[ self.indexId  ] = response.url
             self.indexId +=  1
             content = response.css('#content')
 
@@ -91,10 +92,7 @@ class CalpurniaSpider(scrapy.Spider):
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
             if ref.startswith( "https://") or ref.startswith( "http://"):
-                if ref in self.URLsDiccc.keys():
-                    print("\nomiting already parsed page from hrefs found")
-                else:
-                    print( "\n\n next page: " + ref  + "\n\n" )
+                if not ref in self.URLsDiccc.values():
                     yield Request(ref, callback=self.parse)
             elif ref.startswith( "/" ): # --> its a relative path ------
                 # if we're actually in ..org/KDEPLASMA and foud a relative
@@ -106,22 +104,25 @@ class CalpurniaSpider(scrapy.Spider):
                 if domain.endswith("/"):
                     domain = domain[:-1]
                 next_page = domain + ref
-                print("\nrelative path found: " + next_page )
-                #yield Request( next_page, callback=self.parse)
-            else:
-                print( "\ndroped url " + ref)
+                #print("\nrelative path found: " + next_page )
+                yield Request( next_page, callback=self.parse)
+            #else:
+                #print( "\ndroped url " + ref)
+
         #imprime el diccionario palabra - set ------> postings
         #print self.termDiccc
 
     def closed(self, reason):
         # print self.termDiccc
         with open('postings.json', 'wb') as fp:
-            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default) #indent = 4
+            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4) #indent = 4
         with open('urls.json', 'wb') as fp:
             json.dump(self.URLsDiccc,fp, indent = 4) 
         
         print ( "\n\nFinal Results: " )
-        #print ( "\n\tPostings dicc size: " + self.termDiccc  ?? size() )
+        print ( "\n\tPostings dicc size: %d" % len( self.termDiccc ) )
+        print ( "\n\tURLs dicc size: %d" % len( self.URLsDiccc ) )
+        print ( "\n")
          
         # with open('postings.json') as data_file:    
         #     data = json.load(data_file)
