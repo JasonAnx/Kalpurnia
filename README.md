@@ -1,11 +1,12 @@
-# Índice en motor de búsqueda web [TP1-CI2414]
+# Scrapy-based Web Crawler and Search Engine
+## CI-2414 Information Retrieval
+### University of Costa Rica
 
-para guardar los resultados de la araña en un .json:
-`scrapy crawl spidername -o items.json -t json`
+By default, the spider stores its results in a .json, there's no need to add `-o name.json`, just run
+
+    scrapy crawl CalpurniaCrawler
+
+on /webSearch/webSearch/spiders
 
 
-https://wiki.archlinux.org/index.php/MongoDB
-
-opcional 
-yaourt -S robomongo --needed --noconfirm 
-MongoDB Manager
+Add `--nolog` to deactivate the scrapy log during runtime 

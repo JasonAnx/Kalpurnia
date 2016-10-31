@@ -4,10 +4,11 @@ from urlparse import urlparse
 import scrapy
 import Queue
 from scrapy import Request
+from collections import namedtuple
 import os # clear console, delete/open files 
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
-from stemming.porter2 import stem
+from ..stemming.porter2 import stem
 # from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
 import time # sleep ( n secons )
@@ -31,12 +32,15 @@ class CalpurniaSpider(scrapy.Spider):
 
     
     URLsDiccc = {}
-    indexId = 1
+
+    URL_Id = 1
 
     DEFAULT_REQUEST_HEADERS = {
        'Accept': 'text/html',
        'Accept-Language': 'en'
     }
+
+    DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
 
     termDiccc = {}
 
@@ -69,25 +73,33 @@ class CalpurniaSpider(scrapy.Spider):
     def parse(self, response):
         #print("Started parsing " + response.url )
         if not response.url in self.URLsDiccc.values():        
-            self.URLsDiccc[ self.indexId  ] = response.url
-            self.indexId +=  1
+            self.URLsDiccc[ self.URL_Id  ] = response.url
+            self.URL_Id +=  1
             content = response.css('#content')
 
             for word in content.css('p *::text').re(r'\w+'):
-                #aplica stemming a cada palabra
-                stemmedword = word                  # Sin Stemming ni lowercase
-                #stemmedword = stem( word.lower() )  # Sin Stemming ni lowercase
+                
+                # No Stemming nor lowercase
+                #stemmedword = word
+                
+                # Stemming & lowercase
+                stemmedword = stem( word.lower() )
 
-                # si la palabra no existe en el diciconario de postings, 
-                # la agrega, y la empareja con un set vacio
+                # if the word is not in the postings dictionary,
+                # add it and match it with an empty set  
                 if stemmedword not in self.termDiccc:
-                    self.termDiccc[stemmedword] = set()
-                # este o no en el diccionario, si la encontro, tiene que agregarla a
-                # la lista de postings. Asociada al documento.  
-                self.termDiccc[stemmedword].add(self.indexId-1)
-                #yield {
-                #    response.url: stemmedword
-                #}
+                    self.termDiccc[stemmedword] = {}
+
+                # if the actual url / index id  is not in the   
+                # stemmedword associated dict, add it and set 
+                # the term frecuency to 1
+                # (the number of times that 'stemmedword' occurs in 'URL_Id-1') 
+                if (self.URL_Id-1) not in self.termDiccc[stemmedword]:
+                    self.termDiccc[stemmedword][self.URL_Id-1] = 1
+                else:
+                    # increment the term frecuency
+                    self.termDiccc[stemmedword][self.URL_Id-1] += 1
+                # self.termDiccc[stemmedword][0]
 
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
@@ -95,8 +107,8 @@ class CalpurniaSpider(scrapy.Spider):
                 if not ref in self.URLsDiccc.values():
                     yield Request(ref, callback=self.parse)
             elif ref.startswith( "/" ): # --> its a relative path ------
-                # if we're actually in ..org/KDEPLASMA and foud a relative
-                # path /PACMAN, we must go to ..org/PACMAN, not to 
+                # if we're actually on ..org/KDEPLASMA and find a relative
+                # path to /PACMAN, we must go to ..org/PACMAN, not to 
                 # ..org/KDEPLASMA/PACMAN, so we can't just append new refs  
                 parsed_uri = urlparse(response.url)
                 domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
@@ -109,14 +121,11 @@ class CalpurniaSpider(scrapy.Spider):
             #else:
                 #print( "\ndroped url " + ref)
 
-        #imprime el diccionario palabra - set ------> postings
-        #print self.termDiccc
-
     def closed(self, reason):
         # print self.termDiccc
-        with open('postingsSinStemm.json', 'wb') as fp:
+        with open('postings.json', 'wb') as fp:
             json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4) #indent = 4
-        with open('urlsSinStemm.json', 'wb') as fp:
+        with open('urls.json', 'wb') as fp:
             json.dump(self.URLsDiccc,fp, indent = 4) 
         
         print ( "\n\nFinal Results: " )
