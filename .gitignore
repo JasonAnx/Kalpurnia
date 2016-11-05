@@ -1,7 +1,3 @@
-/webSearch/webSearch/spiders/*.json
-/webSearch/webSearch/spiders/*.pyc
-/webSearch/*.pyc
-/webSearch/webSearch/*.pyc
-
 *.pyc
+*.pyo
 *.json

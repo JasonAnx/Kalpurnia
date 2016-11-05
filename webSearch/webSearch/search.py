@@ -1,16 +1,17 @@
+import os # clear console, delete/open files 
 import json
 import sys, getopt
 import numpy as np
-from spiders.stemming.porter2 import stem
+from stemming.porter2 import stem
 
 
-json_postings = open('postingsSinStemm.json')
-json_urls     = open('urlsSinStemm.json')
+json_postings = open('postings.json')
+json_urls     = open('urls.json')
 
 postings = json.load( json_postings )
 urls     = json.load( json_urls     )
 
-
+os.system('cls' if os.name == 'nt' else 'clear')
 print("\n\n")
 
 #opts, args = getopt.getopt(sys.argv,"hi:o:",["ifile=","ofile="])
@@ -29,16 +30,23 @@ sc = 'desktop'
 
 print("resultados de la busqueda %s %s % s:\n" % (sa, sb, sc) )
 
-stem = False
+stemming = True
 
-if stem:
+
+if stemming:
+    print("Note: query stemming enabled\n" )
     sa = stem( sa.lower() ) #aplica stemming a cada palabra
     sb = stem( sb.lower() ) #aplica stemming a cada palabra
     sc = stem( sc.lower() ) #aplica stemming a cada palabra
+else: print("Note: query stemming disabled\n" )
 
-a = postings[ sa ]
-b = postings[ sb ]
-c = postings[ sc ]
+if sa in postings:
+    a = postings[ sa ]
+if sb in postings:
+    b = postings[ sb ]
+
+if sc in postings:
+    c = postings[ sc ]
 
 d = [a, b, c]
 

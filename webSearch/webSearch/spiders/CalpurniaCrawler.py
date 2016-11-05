@@ -27,12 +27,13 @@ def set_default(obj):
 
 class CalpurniaSpider(scrapy.Spider):
     name = "CalpurniaCrawler"
-    allowed_domains = ["wiki.archlinux.org"]
+    allowed_domains = [
+        "wiki.archlinux.org"
+    ]
 
 
     
     URLsDiccc = {}
-
     URL_Id = 1
 
     DEFAULT_REQUEST_HEADERS = {
@@ -54,79 +55,98 @@ class CalpurniaSpider(scrapy.Spider):
         #for f in filelist: 
         #    os.remove(f)
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
+        
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Starting in 4 seconds")
-        time.sleep(1)
-        os.system('cls' if os.name == 'nt' else 'clear')
+
+        # print("Starting in 4 seconds")
+        # time.sleep(1)
+        # os.system('cls' if os.name == 'nt' else 'clear')
+
         print("Starting in 3 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
+
         print("Starting in 2 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
+
         print("Starting in 1 seconds")
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
+
         print("Parsing")
         return
         
     def parse(self, response):
-        #print("Started parsing " + response.url )
-        if not response.url in self.URLsDiccc.values():        
-            self.URLsDiccc[ self.URL_Id  ] = response.url
-            self.URL_Id +=  1
-            content = response.css('#content')
-
-            for word in content.css('p *::text').re(r'\w+'):
-                
-                # No Stemming nor lowercase
-                #stemmedword = word
-                
-                # Stemming & lowercase
-                stemmedword = stem( word.lower() )
-
-                # if the word is not in the postings dictionary,
-                # add it and match it with an empty set  
-                if stemmedword not in self.termDiccc:
-                    self.termDiccc[stemmedword] = {}
-
-                # if the actual url / index id  is not in the   
-                # stemmedword associated dict, add it and set 
-                # the term frecuency to 1
-                # (the number of times that 'stemmedword' occurs in 'URL_Id-1') 
-                if (self.URL_Id-1) not in self.termDiccc[stemmedword]:
-                    self.termDiccc[stemmedword][self.URL_Id-1] = 1
-                else:
-                    # increment the term frecuency
-                    self.termDiccc[stemmedword][self.URL_Id-1] += 1
-                # self.termDiccc[stemmedword][0]
+        # ---------- 
+        if response.url in self.URLsDiccc.values():
+            return
+        
+        self.URLsDiccc[ self.URL_Id  ] = response.url.encode('utf8')
+        self.URL_Id +=  1
+        content = response.css('#content')
+        
+        # self.ALLsDiccc[response.url] = response.css('#content *::text').extract()
+        # print( content.css('p *::text').extract() )
+        for word in content.css('p *::text').re(r'\w+'):
+            # self.ALLsDiccc[response.url] = 
+            # No Stemming nor lowercase
+            #stemmedword = word.encode('utf8')
+            
+            # Stemming & lowercase
+            stemmedword = stem( word.lower() ).encode('utf8')
+            # if the word is not in the postings dictionary,
+            # add it and match it with an empty set  
+            if stemmedword not in self.termDiccc:
+                self.termDiccc[stemmedword] = {}
+            # if the actual url / index id  is not in the   
+            # stemmedword associated dict, add it and set 
+            # the term frecuency to 1
+            # (the number of times that 'stemmedword' occurs in 'URL_Id-1') 
+            if (self.URL_Id-1) not in self.termDiccc[stemmedword]:
+                self.termDiccc[stemmedword][self.URL_Id-1] = 1
+            else:
+                # increment the term frecuency
+                self.termDiccc[stemmedword][self.URL_Id-1] += 1
+            # self.termDiccc[stemmedword][0]
+        #-for-
 
         hrefs = response.css('a').xpath('@href').extract()
         for ref in hrefs:
-            if ref.startswith( "https://") or ref.startswith( "http://"):
-                if not ref in self.URLsDiccc.values():
-                    yield Request(ref, callback=self.parse)
-            elif ref.startswith( "/" ): # --> its a relative path ------
+            # remove other arguments
+            ref = ref.split('&', 1)[0]
+
+            if ref.startswith( "/" ): # --> its a relative path ------
                 # if we're actually on ..org/KDEPLASMA and find a relative
                 # path to /PACMAN, we must go to ..org/PACMAN, not to 
                 # ..org/KDEPLASMA/PACMAN, so we can't just append new refs  
                 parsed_uri = urlparse(response.url)
                 domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
                 # -------------------------------------------------------
+
                 if domain.endswith("/"):
+                    # ref[1:] would remove the '/' from ref,
+                    # but we can't assume all domains end with '/'
                     domain = domain[:-1]
-                next_page = domain + ref
+                
+                ref = domain + ref
                 #print("\nrelative path found: " + next_page )
-                yield Request( next_page, callback=self.parse)
+                # yield Request( ref, callback=self.parse)
+            if ref.startswith( "https://") or ref.startswith( "http://"):
+                yield Request(ref, callback=self.parse)
             #else:
                 #print( "\ndroped url " + ref)
+            
 
     def closed(self, reason):
-        # print self.termDiccc
+        # Save Results
         with open('postings.json', 'wb') as fp:
-            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4) #indent = 4
+            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4, ensure_ascii=False) #indent = 4
         with open('urls.json', 'wb') as fp:
-            json.dump(self.URLsDiccc,fp, indent = 4) 
+            json.dump(self.URLsDiccc,fp, indent = 4, ensure_ascii=False)
+        # with open('TEST.json', 'wb') as fp:
+        #     json.dump(self.ALLsDiccc,fp, indent = 4)  
+        
         
         print ( "\n\nFinal Results: " )
         print ( "\n\tPostings dicc size: %d" % len( self.termDiccc ) )
