@@ -1,5 +1,5 @@
 from scrapy.spiders import BaseSpider
-from urllib2 import urlopen
+from urllib2 import urlopen, unquote
 from urlparse import urlparse
 from math import log10
 import scrapy
@@ -83,7 +83,7 @@ class CalpurniaSpider(scrapy.Spider):
         if response.url in self.URLsDiccc.values():
             return
         
-        self.URLsDiccc[ self.URL_Id  ] = response.url.encode('utf8')
+        self.URLsDiccc[ self.URL_Id  ] = unquote( response.url.encode('utf8') )
         self.URL_Id +=  1
         content = response.css('#content')
         

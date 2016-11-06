@@ -5,8 +5,8 @@ import numpy as np
 from stemming.porter2 import stem
 
 
-json_postings = open('postings.json')
-json_urls     = open('urls.json')
+json_postings = open('spiders/postings.json')
+json_urls     = open('spiders/urls.json')
 
 postings = json.load( json_postings )
 urls     = json.load( json_urls     )
