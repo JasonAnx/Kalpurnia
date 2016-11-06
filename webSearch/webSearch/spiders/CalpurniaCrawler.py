@@ -1,6 +1,7 @@
 from scrapy.spiders import BaseSpider
 from urllib2 import urlopen
 from urlparse import urlparse
+from math import log10
 import scrapy
 import Queue
 from scrapy import Request
@@ -41,7 +42,7 @@ class CalpurniaSpider(scrapy.Spider):
        'Accept-Language': 'en'
     }
 
-    DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
+    # DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
 
     termDiccc = {}
 
@@ -137,15 +138,34 @@ class CalpurniaSpider(scrapy.Spider):
             #else:
                 #print( "\ndroped url " + ref)
             
-
+    postingsWgts = {}
     def closed(self, reason):
         # Save Results
         with open('postings.json', 'wb') as fp:
-            json.dump(self.termDiccc,fp, sort_keys=True, default=set_default, indent = 4, ensure_ascii=False) #indent = 4
+            json.dump(self.termDiccc,fp, default=set_default, indent = 4, ensure_ascii=False) #indent = 4
         with open('urls.json', 'wb') as fp:
             json.dump(self.URLsDiccc,fp, indent = 4, ensure_ascii=False)
         # with open('TEST.json', 'wb') as fp:
         #     json.dump(self.ALLsDiccc,fp, indent = 4)  
+        
+        N =  len ( self.URLsDiccc )
+        for ptng in self.termDiccc:
+            self.postingsWgts[ptng] = {}
+            # Storing DF in the list of URLs might be impractical
+            # self.postingsWgts[ptng]['DF'] = len(self.termDiccc[ptng])
+            DF = len(self.termDiccc[ptng])
+            for urlId in self.termDiccc[ptng]:
+                wtd = 1 + log10( self.termDiccc[ptng][urlId] )
+                # we choose to store the df in every term url
+                self.postingsWgts[ptng][urlId] = {
+                    "df": DF,
+                    "count": self.termDiccc[ptng][urlId],
+                    "weight":wtd,
+                    "idf": log10( N / DF )
+                }
+
+        with open('postingsWgts.json', 'wb') as fp:
+            json.dump(self.postingsWgts,fp, indent = 4, ensure_ascii=False)
         
         
         print ( "\n\nFinal Results: " )
