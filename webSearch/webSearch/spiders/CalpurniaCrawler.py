@@ -1,17 +1,22 @@
+# KALPURNIA
 from scrapy.spiders import BaseSpider
-from urllib2 import urlopen, unquote
-from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import  unquote
+from urllib.parse import  urlparse
+# from urlparse import urlparse # python2
 from math import log10
-import scrapy
-import Queue
 from scrapy import Request
-from collections import namedtuple
-import os # clear console, delete/open files 
+# from collections import namedtuple
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from ..stemming.porter2 import stem
+from webSearch.items import Url, Posting
 # from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
+from scrapy.linkextractors import LinkExtractor #self.link_extractor = LinkExtractor()
+import scrapy.exceptions
+import scrapy
+import os # clear console, delete/open files
 import time # sleep ( n secons )
 import json
 
@@ -27,41 +32,32 @@ def set_default(obj):
 
 
 class CalpurniaSpider(scrapy.Spider):
-    name = "CalpurniaCrawler"
+    
+    name = "KalpurniaCrawler"
+
     allowed_domains = [
         "wiki.archlinux.org"
     ]
 
-
-    
     URLsDiccc = {}
     URL_Id = 1
-
-    DEFAULT_REQUEST_HEADERS = {
-       'Accept': 'text/html',
-       'Accept-Language': 'en'
-    }
+    termDiccc = {}
 
     # DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
-
-    termDiccc = {}
 
     start_urls = [
         'https://wiki.archlinux.org/',
     ]
 
     def __init__(self, **kw):
-        print("INICIO")
+        print("Spider running")
         #filelist = [ f for f in os.listdir(".") if f.endswith(".json") ]
         #for f in filelist: 
         #    os.remove(f)
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
+        self.link_extractor = LinkExtractor()
         
         os.system('cls' if os.name == 'nt' else 'clear')
-
-        # print("Starting in 4 seconds")
-        # time.sleep(1)
-        # os.system('cls' if os.name == 'nt' else 'clear')
 
         print("Starting in 3 seconds")
         time.sleep(1)
@@ -77,25 +73,32 @@ class CalpurniaSpider(scrapy.Spider):
 
         print("Parsing")
         return
-        
+    
+    limit   = 20
+    current = 0
     def parse(self, response):
-        # ---------- 
-        if response.url in self.URLsDiccc.values():
-            return
         
-        self.URLsDiccc[ self.URL_Id  ] = unquote( response.url.encode('utf8') )
+        links = self.link_extractor.extract_links(response)
+        for x in links:
+            url = unquote( x.url)
+            url = url.split('&', 1)[0]
+            if not url in self.URLsDiccc.values():
+                yield Request( url, callback = self.parse )
+        
+        # it seems python 3 alreay saves to utf8
+        self.URLsDiccc[ self.URL_Id  ] = unquote( response.url )#.encode('utf8')
         self.URL_Id +=  1
         content = response.css('#content')
         
         # self.ALLsDiccc[response.url] = response.css('#content *::text').extract()
-        # print( content.css('p *::text').extract() )
         for word in content.css('p *::text').re(r'\w+'):
             # self.ALLsDiccc[response.url] = 
-            # No Stemming nor lowercase
-            #stemmedword = word.encode('utf8')
             
-            # Stemming & lowercase
-            stemmedword = stem( word.lower() ).encode('utf8')
+            # --- No Stemming nor lowercase
+            #stemmedword = word.encode('utf8')
+            # --- Stemming & lowercase
+            stemmedword = stem( word.lower() )#.encode('utf8')
+
             # if the word is not in the postings dictionary,
             # add it and match it with an empty set  
             if stemmedword not in self.termDiccc:
@@ -109,43 +112,17 @@ class CalpurniaSpider(scrapy.Spider):
             else:
                 # increment the term frecuency
                 self.termDiccc[stemmedword][self.URL_Id-1] += 1
-            # self.termDiccc[stemmedword][0]
-        #-for-
 
-        hrefs = response.css('a').xpath('@href').extract()
-        for ref in hrefs:
-            # remove other arguments
-            ref = ref.split('&', 1)[0]
 
-            if ref.startswith( "/" ): # --> its a relative path ------
-                # if we're actually on ..org/KDEPLASMA and find a relative
-                # path to /PACMAN, we must go to ..org/PACMAN, not to 
-                # ..org/KDEPLASMA/PACMAN, so we can't just append new refs  
-                parsed_uri = urlparse(response.url)
-                domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-                # -------------------------------------------------------
-
-                if domain.endswith("/"):
-                    # ref[1:] would remove the '/' from ref,
-                    # but we can't assume all domains end with '/'
-                    domain = domain[:-1]
-                
-                ref = domain + ref
-                #print("\nrelative path found: " + next_page )
-                # yield Request( ref, callback=self.parse)
-            if ref.startswith( "https://") or ref.startswith( "http://"):
-                yield Request(ref, callback=self.parse)
-            #else:
-                #print( "\ndroped url " + ref)
-            
+  
     postingsWgts = {}
     def closed(self, reason):
         # Save Results
-        with open('postings.json', 'wb') as fp:
-            json.dump(self.termDiccc,fp, default=set_default, indent = 4, ensure_ascii=False) #indent = 4
-        with open('urls.json', 'wb') as fp:
-            json.dump(self.URLsDiccc,fp, indent = 4, ensure_ascii=False)
-        # with open('TEST.json', 'wb') as fp:
+        with open('postings.json', 'w') as fp:
+            json.dump(self.termDiccc,fp, default=set_default, ensure_ascii=False) #indent = 4
+        with open('urls.json', 'w') as fp:
+            json.dump(self.URLsDiccc,fp, ensure_ascii=False)
+        # with open('TEST.json', 'w') as fp:
         #     json.dump(self.ALLsDiccc,fp, indent = 4)  
         
         N =  len ( self.URLsDiccc )
@@ -158,14 +135,14 @@ class CalpurniaSpider(scrapy.Spider):
                 wtd = 1 + log10( self.termDiccc[ptng][urlId] )
                 # we choose to store the df in every term url
                 self.postingsWgts[ptng][urlId] = {
-                    "df": DF,
-                    "count": self.termDiccc[ptng][urlId],
-                    "weight":wtd,
-                    "idf": log10( N / DF )
+                    'df': DF,
+                    'count': self.termDiccc[ptng][urlId],
+                    'weight':wtd,
+                    'idf': log10( N / DF )
                 }
 
-        with open('postingsWgts.json', 'wb') as fp:
-            json.dump(self.postingsWgts,fp, indent = 4, ensure_ascii=False)
+        with open('postingsWgts.json', 'w') as fp:
+            json.dump(self.postingsWgts,fp, ensure_ascii=False)
         
         
         print ( "\n\nFinal Results: " )
