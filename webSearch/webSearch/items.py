@@ -8,7 +8,14 @@
 import scrapy
 
 
-class WebsearchItem(scrapy.Item):
+class Url(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
+    key = scrapy.Field()
+    url = scrapy.Field()
+    pass
+
+class Posting(scrapy.Item):
+    # define the fields for your item here like:
+    posting = scrapy.Field()
+    url_id = scrapy.Field()
     pass
