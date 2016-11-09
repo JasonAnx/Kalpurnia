@@ -29,4 +29,5 @@ Run the spider on `/webSearch/webSearch/spiders` with
 By default, `kalpurniaCrawler` stores its results in a .json, so there's no need to add `-o name.json`.
 
 
-
+#### memurandum
+This is extremely useful https://rtyley.github.io/bfg-repo-cleaner/

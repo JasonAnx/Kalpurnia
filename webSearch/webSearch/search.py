@@ -5,11 +5,12 @@ import numpy as np
 from stemming.porter2 import stem
 
 
-json_postings = open('spiders/postings.json')
-json_urls     = open('spiders/urls.json')
+print("Warning - jsons commented out")
+# json_postings = open('spiders/postings.json')
+# json_urls     = open('spiders/urls.json')
 
-postings = json.load( json_postings )
-urls     = json.load( json_urls     )
+# postings = json.load( json_postings )
+# urls     = json.load( json_urls     )
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print("\n\n")
@@ -39,6 +40,8 @@ if stemming:
     sb = stem( sb.lower() ) #aplica stemming a cada palabra
     sc = stem( sc.lower() ) #aplica stemming a cada palabra
 else: print("Note: query stemming disabled\n" )
+
+print (sa, sb, sc, stem('rendering'))
 
 if sa in postings:
     a = postings[ sa ]
