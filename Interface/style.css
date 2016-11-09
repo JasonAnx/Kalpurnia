@@ -1,0 +1,233 @@
+* {
+list-style: none;
+margin: 0px;
+/*font-family: 'Raleway', sans-serif;*/
+
+}
+
+body {
+    overflow: hidden;
+    color: #eee;
+    /*font-family: 'Raleway', sans-serif;*/
+
+}
+
+.input-field input[type=search].invalid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+
+.arch {
+    text-align: center;
+    margin: auto;
+}
+
+.archlnx {
+    text-align: center;
+    text-shadow: #000 0px 2px 2px;
+    margin-bottom: 90px;
+    padding: 30px 70px;
+    border: 3px solid white;
+}
+
+#asdf{
+    position: relative;
+}
+
+.lcenter {
+    margin: auto;
+}
+
+/*Mixins*/
+/*Overlay*/
+.overlay {
+    background: url(https://i.imgur.com/aZcB3op.jpg) no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: fixed;
+    width: 120%;
+    height: 110%;
+    z-index: -2;
+    filter: blur(0px) grayscale(0%);
+    transition: 2s;
+    top: -15px;
+    left: -35px;
+    overflow: hidden;
+}
+
+.dim {
+    filter: blur(10px) grayscale(80%);
+    transition: 2s;
+}
+.dim2 {
+    filter: blur(7px) grayscale(90%);
+    transition: 2s;
+}
+
+/*Pattern Overlay*/
+.pat {
+position: fixed;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.4) url("http://www.dailyfreepsd.com/wp-content/uploads/2013/09/underwater-blurred-background.jpg");
+max-width: 100%;
+}
+
+/*Wrappers*/
+.wrapper {
+width: 500px;
+margin: 0 auto;
+margin-top: 14%;
+/*Typography*/
+/*Form*/
+/*Result*/
+}
+/*.wrapper h1 {*/
+/*font: 70px Helvetica;*/
+/*color: #FFF;*/
+/*text-align: center;*/
+/*text-shadow: #000 0px 2px 2px;*/
+/*margin-bottom: 40px;*/
+/*    padding: 30px 70px;*/
+/*    border: 3px solid white;*/
+/*    text-align: center;*/
+
+/*}*/
+
+.wrapper a {
+color: #FFF;
+text-decoration: none;
+font: 16px Helvetica;
+text-shadow: #000 0px 2px 2px;
+}
+.wrapper a:hover {
+color: #ccc;
+-webkit-transition: 0.5s ease;
+-moz-transition: 0.5s ease;
+-o-transition: 0.5s ease;
+-ms-transition: 0.5s ease;
+transition: 0.5s ease;
+}
+/*.wrapper input {*/
+/*width: 100%;*/
+/*padding: 10px;*/
+/*border: solid 1px #dcdcdc;*/
+/*outline: none;*/
+/*text-align: center;*/
+/*font: 20px Helvetica, Sans-Serif;*/
+/*transition: box-shadow 0.3s, border 0.3s;*/
+/*transition-property: box-shadow, border;*/
+/*transition-duration: 0.3s, 0.3s;*/
+/*transition-timing-function: ease, ease;*/
+/*transition-delay: 0s, 0s;*/
+/*}*/
+
+
+
+.wrapper .result {
+color: #FFF;
+text-decoration: none;
+font: 16px Lobster;
+text-shadow: #000 0px 2px 2px;
+text-align: center;
+display: none;
+margin-bottom: 20px;
+}
+.wrapper ul li {
+float: left;
+padding: 0px 0px 0px 25px;
+}
+
+
+.gif {
+width: 16px;
+height: 10px;
+display: block;
+background: url("https://media.giphy.com/media/112BoJM8IWTnWM/giphy.gif");
+margin-left: 47%;
+display: none;
+}
+
+.form {
+position: relative;
+}
+
+.flex{
+    display: flex;
+}
+.clearFont {
+}
+
+.res {
+clear: both;
+margin-top: -140px;
+/*width: 85%;*/
+}
+.res li {
+    display: none;
+    margin-bottom: 30px;
+}
+.res h3, .res p {
+color: #FFF;
+}
+.linux  {
+    color: #08c;
+}
+.button-pr{
+    border-radius: 0px;
+    border: none;
+}
+.button-pr:hover{
+    background-color: #08c;
+    transition: 1s;
+}
+.res h3 {
+font-size: 16px;
+/*font-weight: 700;*/
+/*margin-bottom: 6px;*/
+/*text-shadow: #000 0px 2px 2px;*/
+}
+.res p {
+font-size: 14px;
+}
+
+/*Clearfix*/
+.clearfix:after {
+content: ".";
+display: block;
+clear: both;
+visibility: hidden;
+line-height: 0;
+height: 0;
+}
+
+.clearfix {
+display: inline-block;
+overflow-y: auto;
+max-height: 25em;
+}
+
+html[xmlns] .clearfix {
+display: block;
+}
+
+* html .clearfix {
+height: 1%;
+}
+
+/*Yioop Menu*/
+.yioop {
+position: absolute;
+top: 120;
+}
+
+/*Font Awesome Fix*/
+.fa {
+margin-right: 5px;
+}
+
+.fa-cog {
+margin-left: 15px;
+}
