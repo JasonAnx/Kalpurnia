@@ -38,27 +38,32 @@ function readFromFile($fileName){
       }
       return  array_unique($docArray);
   }
+  
+function createVectorSpace($postings, $termArray){
+    
 
-  function createVectorSpace($postings){
-      $vectorSpace = array();
+    $vectorSpace = array();
 
-      foreach ($postings as $key => $value) {
-          $row = array();// array_fill(1, $collectionSize, 0);
-          foreach ($value as $k => $v) {
-              $row[$k] = $v[weight]*$v[idf] ;//tf-idf
-          }
-          $vectorSpace[$key] = $row;
-          //var_dump($vectorSpace);
-      }
-      return $vectorSpace;
-  }
-      
+    foreach ($termArray as $term ) {
+        $row = array();// array_fill(1, $collectionSize, 0);
+        foreach ( $postings[ $term ] as $v => $i ) {
+            //
+            $row[$v] = $i[weight]*$i[idf];
+            //echo $v;
+            
+        }
+
+        $vectorSpace[$term] = $row;
+    }
+    return $vectorSpace;
+}
+           
 
   function processQuery($termArray){
       $postings = readFromFile('postingsWgts.json'); //complete posting list, read from the file.
       $urls = readFromFile('urls.json');
       $docArray = getDocArray($postings, $termArray); //list of documents regarding the query
-      $resultMatrix = createVectorSpace($postings);
+      $resultMatrix = createVectorSpace($postings, $termArray);
       $resultMatrix = lengthNormalize($resultMatrix, sizeof($urls));
 
       $query = array_count_values($termArray);
