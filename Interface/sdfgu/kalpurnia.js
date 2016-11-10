@@ -8,10 +8,6 @@ $(document).ready(function () {
             $('#asdf').animate({ top: '-170px' });
             $('.res li').fadeIn(1000);
             $('.overlay').addClass('dim2');
-            
-            $('#serp').html("Searching...")
-            
-            var t0 = performance.now();
             $.ajax({
                 type: "POST",
                 url: "spell.php",
@@ -25,7 +21,7 @@ $(document).ready(function () {
                             $('#aspell').html("Maybe you meant "+"<a href='asdf'>"+res[0]+"</a>");
                         }
                         //shows first 15 results, adaptable to the user needs.
-                        for (var i = 1; i < Object.keys(res).length; i++) {
+                        for (var i = 1; i < 15; i++) {
                             html += res[i]; //retrieve each result
                         }
                         $('#serp').html(html);//finally, show the complete list of retrieved results.
@@ -36,8 +32,6 @@ $(document).ready(function () {
                     }
                 }
             });
-            var t1 = performance.now();
-            alert(t1-t0);
         }
     })
     ;
