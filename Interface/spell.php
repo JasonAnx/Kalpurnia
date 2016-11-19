@@ -106,7 +106,7 @@ function createVectorSpace($postings, $termArray){
 # if you want to use other languajes, spanish for example:
 #    sudo apt-get install aspell-es
 
-// $pspell_link = pspell_new("en");
+$pspell_link = pspell_new("en");
 // $pspell_link = pspell_new("es");
 
 
@@ -119,11 +119,12 @@ $nl  = '<br>';
 
 if ($_POST) {
     $message = $_POST['msg'];
-    $message = strtolower($message );
-    // $return = array();
-    // echo $message;
+
+    // echo "msg: ".$message;
 
     $word = explode(" ", $message);
+    $return = array();
+
     // echo $message.$nl.$nl;
     // foreach($word as $k => $v) {
     //   if (pspell_check($pspell_link, $v)) {
@@ -134,27 +135,26 @@ if ($_POST) {
     //   };
     // };
 
-    // $suggestions = false;
-    // for ( $i=0; $i<count($word); $i++)  {
-    //    if ( !pspell_check($pspell_link, $word[$i])) {
-    //
-    //         $wsggtd = pspell_suggest($pspell_link, $word[$i])[0];
-    //         if ( $wsggtd ) {
-    //             $suggestions = true;
-    //             $word[$i] = '<b>'.$wsggtd.'</b>';
-    //        }
-    //    }
-    //
-    // }
-    // $str;
-    // if ( $suggestions == true )  {
-    //     foreach ( $word as $w ) {
-    //         $str += $w." ";
-    //     }
-    //     $return[corr] = $str
-    // }
-    $return[0] = " ";
-    echo json_encode(array_merge($return, processQuery($word)),JSON_FORCE_OBJECT);
+    $suggestions = false;
+    for ( $i=0; $i<count($word); $i++)  {
+       if ( !pspell_check($pspell_link, $word[$i])) {
+
+            $wsggtd = pspell_suggest($pspell_link, $word[$i])[0];
+            if ( $wsggtd ) {
+                $suggestions = true;
+                $word[$i] = '<b>'.$wsggtd.'</b>';
+           }
+       }
+
+    }
+    $suggested =" ";
+    if ( $suggestions == true )  {
+        foreach ( $word as $w ) {
+            $suggested .= $w." ";
+        }
+    }
+    $return[0] = $suggested;
+    echo json_encode(array_merge($return, processQuery(explode(" ", $message))),JSON_FORCE_OBJECT);
     // echo json_encode($return);
     exit; // to make sure you arn't getting nothing else
 

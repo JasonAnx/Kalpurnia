@@ -37,7 +37,7 @@ $(document).ready(function () {
                 }
             });
             var t1 = performance.now();
-            alert(t1-t0);
+
         }
     })
     ;

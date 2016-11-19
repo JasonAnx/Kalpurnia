@@ -28,6 +28,16 @@ Run the spider on `/webSearch/webSearch/spiders` with
 
 By default, `kalpurniaCrawler` stores its results in a .json, so there's no need to add `-o name.json`.
 
+# apache host and php on debian and derivates  (Ubuntu, Mint ...)
+
+https://www.howtoforge.com/tutorial/install-apache-with-php-and-mysql-on-ubuntu-16-04-lamp/
+
+clone this repository in /var/www/html/
+
+	sudo apt install aspell-en
+	sudo apt install php-pspell
+	sudo service apache2 restart 
+
 
 #### memurandum
 This is extremely useful https://rtyley.github.io/bfg-repo-cleaner/
