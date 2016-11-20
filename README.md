@@ -1,8 +1,19 @@
+---
 # Scrapy-based Web Crawler and Search Engine
-## CI-2414 Information Retrieval
 ### University of Costa Rica
+#### CI-2414 Information Retrieval
+---
+## Debian-based OS
+Install Apache and Kalpurnia dependecies
 
-# Update
+    sudo apt -y install  apache2 php libapache2-mod-php aspell-en php-pspell
+And restart apache 
+
+    systemctl restart apache2
+
+After installing apache, clone this repository into `/var/www/html/`
+
+## Update (Arch Linux)
 As of November 2016, the scrapy version on the Arch Linux repositories is 1.0.5 so **don't install from pacman**.
 Last Scrapy version [11-2016] is 1.2.1. 
 Version 1.0.5 does not contain some exceptions signals used by Kalpurnia.
@@ -27,17 +38,6 @@ Run the spider on `/webSearch/webSearch/spiders` with
 `--nolog` deactivates the scrapy log during runtime 
 
 By default, `kalpurniaCrawler` stores its results in a .json, so there's no need to add `-o name.json`.
-
-# apache host and php on debian and derivates  (Ubuntu, Mint ...)
-
-https://www.howtoforge.com/tutorial/install-apache-with-php-and-mysql-on-ubuntu-16-04-lamp/
-
-clone this repository in /var/www/html/
-
-	sudo apt install aspell-en
-	sudo apt install php-pspell
-	sudo service apache2 restart 
-
 
 #### memurandum
 This is extremely useful https://rtyley.github.io/bfg-repo-cleaner/
