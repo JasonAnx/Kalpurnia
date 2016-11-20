@@ -4,7 +4,7 @@
 #### CI-2414 Information Retrieval
 ---
 ## Debian-based OS
-Install Apache and Kalpurnia dependecies
+Install Kalpurnia dependencies and Apache
 
     sudo apt -y install  apache2 php libapache2-mod-php aspell-en php-pspell
 And restart apache 
@@ -13,16 +13,29 @@ And restart apache
 
 After installing apache, clone this repository into `/var/www/html/`
 
-## Update (Arch Linux)
-As of November 2016, the scrapy version on the Arch Linux repositories is 1.0.5 so **don't install from pacman**.
-Last Scrapy version [11-2016] is 1.2.1. 
+## Install (Debian-Based) 
+install mongodb
+
+    sudo apt install mongodb
+ 
+ and then, use pip to install Scrapy
+    
+    sudo apt install python3-pip
+    sudo pip3 install update
+    sudo pip3 install scrapy
+
+
+## Install (Arch Linux) 
+### Update 
+> As of November 2016, the scrapy version on the Arch Linux repositories is 1.0.5 so **don't install from pacman**.
+Last Scrapy version [11-2016] is 1.2.1.
 Version 1.0.5 does not contain some exceptions signals used by Kalpurnia.
-So instead of using pacman, install python-pip and use it to install Scrapy:
+
+Instead of using pacman, install Scrapy using python-pip:
 
     sudo pacman -Syy python2-pip python-pip
-
+    
 **DO NOT UPGRADE PIP to version 9**
-
 If you istalled scrapy from pacman, unistall it. Then install scrapy:
 
     sudo pip install Scrapy

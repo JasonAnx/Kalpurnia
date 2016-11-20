@@ -1,5 +1,11 @@
+## Mongo (Debian Based)
+Install mongodb
 
-## Mongo
+    sudo apt install mongodb
+
+
+
+### Mongo (Arch)
 ~~By default, the spider stores its results in a .json, there's no need to add `-o name.json`, just run~~
 Using .json to store the data has become inefficient, now we're using pymongo.
 On Arch Linux, copy and paste into your terminal the following command:
