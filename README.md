@@ -19,10 +19,13 @@ install mongodb
     sudo apt install mongodb
  
  and then, use pip to install Scrapy
-    
+ 
     sudo apt install python3-pip
-    sudo pip3 install update
+    sudo apt install libssl-dev
+    sudo pip3 install --upgrade pip # else, scrapy will fail to install
     sudo pip3 install scrapy
+    sudo pip3 install pymongo
+
 
 
 ## Install (Arch Linux) 
