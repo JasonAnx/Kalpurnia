@@ -13,7 +13,7 @@ if you want to use other languajes, spanish for example:
     sudo apt-get install aspell-es
     
 Then, restart the server:
-    sudo service apache2 restart 
+    sudo service apache2 restart # or sudo service apache2 restart
     
 ## Arch Linx
 

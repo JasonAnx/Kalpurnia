@@ -1,3 +1,5 @@
+
+var resClosed = true;
 $(document).ready(function () {
 
     $('.search').keyup(function(event){
@@ -10,7 +12,12 @@ $(document).ready(function () {
             $('.overlay').addClass('dim2');
             
             $('#serp').html("Searching...")
-            
+
+            if ( resClosed ) {
+                Materialize.toast('Press ESC to close results', 2000, 'gray') // 4000 is the duration of the toast
+                resClosed = false;
+            }
+
             var t0 = performance.now();
             $.ajax({
                 type: "POST",
@@ -44,8 +51,8 @@ $(document).ready(function () {
 
     // JS blur is the opposite of focus
     $('.search').blur(function(){
-        $('.overlay').removeClass('dim');
-        $('.overlay').removeClass('dim2');
+        // $('.overlay').removeClass('dim');
+        // $('.overlay').removeClass('dim2');
     })
 
 });
@@ -66,6 +73,8 @@ $(document).keyup(function(e) {
         $('.overlay').removeClass('dim2');
         $('#aspell').html("");
         $('#serp').html("");
+
+        resClosed = true;
   }
 });
 // ssdsdjhgf
