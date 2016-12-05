@@ -18,10 +18,12 @@ import json
 
 from bs4 import BeautifulSoup
 
-from langdetect import detect
-from nltk import tokenize
+from langdetect import detect # used to detect the page language
+# from nltk import tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk import tokenize
 import re
+
 # from urlparse import urlparse # python2
 # from collections import namedtuple
 # from scrapy import signals
@@ -42,7 +44,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
     name = "KalpurniaCrawlerSentiment"
 
     allowed_domains = [
-        "wiki.archlinux.org"
+        "zeldawiki.org"
     ]
 
     URLsDiccc = {}
@@ -52,7 +54,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
     # DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
 
     start_urls = [
-        'https://wiki.archlinux.org/',
+        'http://zeldawiki.org/',
     ]
 
     def __init__(self, **kw):
@@ -62,6 +64,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         #    os.remove(f)
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
         self.link_extractor = LinkExtractor()
+        self.sid = SentimentIntensityAnalyzer()
         
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -109,6 +112,24 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         if ( language != 'en') : 
             print("\nIgnored document %s\n. Detected lang %s" % (response.url , language) )
             return
+        
+        # tokenize by sentences
+        tok = tokenize.sent_tokenize(docText)
+        for sentc in tok: 
+            if (len(sentc) < 5) : break
+            scrs = self.sid.polarity_scores(sentc )
+            if ( scrs['neu'] < 0.4 ): 
+                print(sentc)
+                if ( scrs['pos'] > scrs['neg'] ):
+                    print ("Positive: %s %%" % str( scrs['pos']+scrs['neu'] ) )
+                else:
+                    print ("Negative: %s %%" % str( scrs['neg']+scrs['neu']) )
+                print()
+
+        # ss = self.sid.polarity_scores(docText)
+        # for k in sorted(ss):
+        #     print('{0}: {1}, '.format(k, ss[k]), end='')
+        # print()
         
         # assign an ID to the url
         # ... = unquote( ... ).encode('utf8')  # it seems python 3 alreay saves to utf8

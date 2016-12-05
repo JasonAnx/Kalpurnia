@@ -3,30 +3,10 @@
 ### University of Costa Rica
 #### CI-2414 Information Retrieval
 ---
-
-### Update dec 4 2016
-
-#### Added a Sentiment analysis spider
-
-In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
-
-    sudo pip3 install beautifulsoup4 
-    sudo pip3 install langdetect
-    sudo pip3 install nltk
-    
-Antes de ejecutar el programa se debe descargar el dataset de reviews de películas:
-    
-    $ python3
-    >>> import nltk
-    >>> nltk.download()
-    >>> d
-    >>> movie_reviews
-    >>> q
-
-
 # Installation
 
 ## Debian-based OS
+
 Install Kalpurnia dependencies and Apache
 
     sudo apt -y install  apache2 php libapache2-mod-php aspell-en php-pspell
@@ -50,6 +30,25 @@ and then, use pip to install Scrapy
     sudo pip3 install langdetect
 
 
+##### Update (Dec 4, 2016): Added a sentiment analysis spider
+
+In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
+
+    sudo pip3 install beautifulsoup4 
+    sudo pip3 install langdetect
+    sudo pip3 install nltk
+    
+Before running the spider, and since the sentiment analysis approach used is machine learning, you must first download the NLTK training datasets. Open the Python3 console and run 
+
+    import nltk
+    nltk
+    nltk.download('punkt')
+    nltk.download('vader_lexicon')
+and exit the console.
+
+To run this spider, use
+
+    scrapy crawl KalpurniaCrawlerSentiment --nolog
 
 
 ## Install (Arch Linux) 
