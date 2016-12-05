@@ -23,17 +23,17 @@ class KalpurniaPipeline(object):
         db = connection[settings['MONGODB_DB']]
         self.urlsDB = db[settings['MONGODB_COLLECTION_URLS']]
         self.ptgsDB = db[settings['MONGODB_COLLECTION_PTGS']]
-        print("Databases Up and Running")
+        print("\nDatabases Up and Running")
         
         # for x in self.collection.find():
         #     print( x['url'] )
 
     def open_spider(self, spider):
         # self.file = open('items.jl', 'wb')
-        print("The Spider has Started Crawling")
+        print("\nThe Spider has Started Crawling")
 
     def close_spider(self, spider):
-        print("The Spider has been killed")
+        print("\nThe Spider has been killed")
         # self.file.close()
 
     limit   = 60

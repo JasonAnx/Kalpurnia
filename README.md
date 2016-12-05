@@ -3,6 +3,29 @@
 ### University of Costa Rica
 #### CI-2414 Information Retrieval
 ---
+
+### Update dec 4 2016
+
+#### Added a Sentiment analysis spider
+
+In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
+
+    sudo pip3 install beautifulsoup4 
+    sudo pip3 install langdetect
+    sudo pip3 install nltk
+    
+Antes de ejecutar el programa se debe descargar el dataset de reviews de películas:
+    
+    $ python3
+    >>> import nltk
+    >>> nltk.download()
+    >>> d
+    >>> movie_reviews
+    >>> q
+
+
+# Installation
+
 ## Debian-based OS
 Install Kalpurnia dependencies and Apache
 
@@ -13,18 +36,19 @@ And restart apache
 
 After installing apache, clone this repository into `/var/www/html/`
 
-## Install (Debian-Based) 
 install mongodb
 
     sudo apt install mongodb
  
- and then, use pip to install Scrapy
+and then, use pip to install Scrapy
  
     sudo apt install python3-pip
     sudo apt install libssl-dev
     sudo pip3 install --upgrade pip # else, scrapy will fail to install
     sudo pip3 install scrapy
     sudo pip3 install pymongo
+    sudo pip3 install langdetect
+
 
 
 
