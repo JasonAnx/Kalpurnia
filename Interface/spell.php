@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '512M'); // or you could use 1G
 
 function readFromFile($fileName){
   $str = file_get_contents($fileName);
@@ -58,10 +59,30 @@ function createVectorSpace($postings, $termArray){
     return $vectorSpace;
 }
            
+    function getSentenceCount($sentences){
+        $result = [];
+        $negCount = 0;
+        $posCount = 0;
+        $result['count'] = count($sentences);
+        if($result['count'] != 0){
+            foreach($sentences as $key => $value){
+                if(strcmp($value['sntmnt'],'Positive') == 0){
+                    $posCount++;
+                }else{
+                    $negCount++;
+                }
+                
+            }
+        }
+        $result['pos']   = $posCount;
+        $result['neg']   = $negCount;
+        return $result;
+    }
 
   function processQuery($termArray){
       $postings = readFromFile('postingsWgts.json'); //complete posting list, read from the file.
       $urls = readFromFile('urls.json');
+      $sentences = readFromFile('sentences.json');
       $docArray = getDocArray($postings, $termArray); //list of documents regarding the query
       $resultMatrix = createVectorSpace($postings, $termArray);
       $resultMatrix = lengthNormalize($resultMatrix, sizeof($urls));
@@ -98,7 +119,8 @@ function createVectorSpace($postings, $termArray){
                     }
                     break;
                 }
-            $finalResults[$counter] = "<li class=' '  style='display: list-item;'><h3>"."Result ".$counter."</h3><p  class='flow-text'> <a href='".$urls[$key]."' target='_blank'>".$urls[$key]."</a></p></li>";
+            $sntcs = getSentenceCount($sentences[$key]);
+            $finalResults[$counter] = "<li class=' '  style='display: list-item;'><h3>Result ".$counter."</h3><p class='flow-text'><a href='".$urls[$key]."' target='_blank'>".$urls[$key]."</a></p><br><p class='flow-text'>".$sntcs['count']." sentences expressing emotion found, ".$sntcs['pos']." positve and ".$sntcs['neg']." negative. </p></li>";
             $counter++;
        }
       return $finalResults;

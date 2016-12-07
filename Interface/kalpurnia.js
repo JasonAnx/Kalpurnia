@@ -24,7 +24,7 @@ $(document).ready(function () {
                 url: "spell.php",
                 data: {msg:srchTxt.value},
                 success: function(result){
-                    //from AJAX string to JSON object.
+                    //from AJAX string to JSON object.AJAX
                     var res = JSON.parse(result);
                     if (res) {//if there's a result, then:
                         var html ="";
