@@ -31,8 +31,11 @@ $(document).ready(function () {
                         if (res[0] !== " ") { //if there's a spell suggestion, then tell me.
                             $('#aspell').html("Maybe you meant "+"<a href='asdf'>"+res[0]+"</a>");
                         }
+                        var t1 = performance.now();
+                        $('#numbRes').html(res[1]+" results in " + ((t1-t0)/1000).toFixed(3)+"s" );
                         //shows first 15 results, adaptable to the user needs.
-                        for (var i = 1; i < Object.keys(res).length; i++) {
+                        // for (var i = 1; i < Object.keys(res).length; i++) {
+                        for (var i = 2; i < 10; i++) {
                             html += res[i]; //retrieve each result
                         }
                         $('#serp').html(html);//finally, show the complete list of retrieved results.
@@ -43,7 +46,6 @@ $(document).ready(function () {
                     }
                 }
             });
-            var t1 = performance.now();
 
         }
     })

@@ -176,7 +176,9 @@ if ($_POST) {
         }
     }
     $return[0] = $suggested;
-    echo json_encode(array_merge($return, processQuery(explode(" ", $message))),JSON_FORCE_OBJECT);
+    $results = processQuery(explode(" ", $message));
+    $return[1] =  count( $results );
+    echo json_encode(array_merge($return, $results ),JSON_FORCE_OBJECT);
     // echo json_encode($return);
     exit; // to make sure you arn't getting nothing else
     
