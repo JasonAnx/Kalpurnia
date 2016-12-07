@@ -176,7 +176,7 @@ if ($_POST) {
         }
     }
     $return[0] = $suggested;
-    $results = processQuery(explode(" ", $message));
+    $results = processQuery(explode(" ", $message)); // receives the message as a list of words
     $return[1] =  count( $results );
     echo json_encode(array_merge($return, $results ),JSON_FORCE_OBJECT);
     // echo json_encode($return);

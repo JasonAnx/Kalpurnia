@@ -35,7 +35,8 @@ $(document).ready(function () {
                         $('#numbRes').html(res[1]+" results in " + ((t1-t0)/1000).toFixed(3)+"s" );
                         //shows first 15 results, adaptable to the user needs.
                         // for (var i = 1; i < Object.keys(res).length; i++) {
-                        for (var i = 2; i < 10; i++) {
+                        r_length =  Object.keys(res).length < 10 ? Object.keys(res).length:10;
+                        for (var i = 2; i < r_length; i++) {
                             html += res[i]; //retrieve each result
                         }
                         $('#serp').html(html);//finally, show the complete list of retrieved results.

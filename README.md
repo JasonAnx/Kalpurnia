@@ -3,6 +3,8 @@
 ### University of Costa Rica
 #### CI-2414 Information Retrieval
 ---
+### note
+> The interface documentation is inside its own folder.
 # Installation:
 ### Debian-based OS
 
@@ -33,6 +35,7 @@ and then, use pip to install Scrapy
 * Added a sentiment analysis spider
 * Added page language detection
 * Changed page parsing from Scrapy's css to BeautifulSoup 4
+* Storing pages in scrapy cache for future crawls (expiration set to "never)"
 
 In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
 
