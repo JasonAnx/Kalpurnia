@@ -48,6 +48,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
     ]
 
     URLsDiccc = {}
+    sentcsDiccc = {}
     URL_Id = 1
     termDiccc = {}
 
@@ -115,17 +116,30 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         
         # tokenize by sentences
         tok = tokenize.sent_tokenize(docText)
-        for sentc in tok: 
-            if (len(sentc) < 5) : break
+        i = 0
+        array = {}
+        for sentc in tok:
+            i += 1 
+            if (len(sentc) < 5): continue
             scrs = self.sid.polarity_scores(sentc )
             if ( scrs['neu'] < 0.4 ): 
-                print(sentc)
                 if ( scrs['pos'] > scrs['neg'] ):
-                    print ("Positive: %s %%" % str( scrs['pos']+scrs['neu'] ) )
+                    #print ("Positive: %s %%" % str( scrs['pos']+scrs['neu'] ) )
+                    array[i] = {
+                        'sntc'  :sentc,
+                        'sntmnt':'Positive',
+                        'weight':str( scrs['pos']+scrs['neu'] )
+                    }
                 else:
-                    print ("Negative: %s %%" % str( scrs['neg']+scrs['neu']) )
-                print()
-
+                    #print ("Negative: %s %%" % str( scrs['neg']+scrs['neu']) )
+                    array[i] = {
+                        'sntc'  :  sentc,
+                        'sntmnt':  'Negative',
+                        'weight':  str( scrs['neg']+scrs['neu'] )
+                    }    
+        self.sentcsDiccc[self.URL_Id] = array
+                
+        #print (self.sentcsDiccc[self.URL_Id],self.URL_Id)
         # ss = self.sid.polarity_scores(docText)
         # for k in sorted(ss):
         #     print('{0}: {1}, '.format(k, ss[k]), end='')
@@ -175,10 +189,15 @@ class KalpurniaEmotionSpider(scrapy.Spider):
     postingsWgts = {}
     def closed(self, reason):
         # Save Results
-        with open('postings.json', 'w') as fp:
-            json.dump(self.termDiccc,fp, default=set_default, ensure_ascii=False) #indent = 4
         with open('urls.json', 'w') as fp:
-            json.dump(self.URLsDiccc,fp, ensure_ascii=False)
+            json.dump(self.URLsDiccc,fp)
+        with open('sentences.json', 'w') as fp:
+            json.dump(self.sentcsDiccc,fp)
+        with open('postings.json', 'w') as fp:
+            json.dump(self.termDiccc,fp)# default=set_default, #indent = 4
+
+
+            
         # with open('TEST.json', 'w') as fp:
         #     json.dump(self.ALLsDiccc,fp, indent = 4)  
         
@@ -199,7 +218,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
                 }
 
         with open('postingsWgts.json', 'w') as fp:
-            json.dump(self.postingsWgts,fp, ensure_ascii=False)
+            json.dump(self.postingsWgts,fp)
         
         
         print ( "\n\nFinal Results: " )
