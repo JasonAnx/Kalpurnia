@@ -3,9 +3,8 @@
 ### University of Costa Rica
 #### CI-2414 Information Retrieval
 ---
-# Installation
-
-## Debian-based OS
+# Installation:
+### Debian-based OS
 
 Install Kalpurnia dependencies and Apache
 
@@ -30,7 +29,10 @@ and then, use pip to install Scrapy
     sudo pip3 install langdetect
 
 
-##### Update (Dec 4, 2016): Added a sentiment analysis spider
+##### Update (Dec 4, 2016): 
+* Added a sentiment analysis spider
+* Added page language detection
+* Changed page parsing from Scrapy's css to BeautifulSoup 4
 
 In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
 
@@ -52,7 +54,8 @@ To run this spider, use
 
 
 ## Install (Arch Linux) 
-### Update 
+Install the same Python packages mentioned in Debian Installation.
+#### Update 
 > As of November 2016, the scrapy version on the Arch Linux repositories is 1.0.5 so **don't install from pacman**.
 Last Scrapy version [11-2016] is 1.2.1.
 Version 1.0.5 does not contain some exceptions signals used by Kalpurnia.
