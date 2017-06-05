@@ -1,10 +1,11 @@
 ---
-# Scrapy-based Web Crawler and Search Engine
+# Kalpurnia
+## Scrapy-based Web Crawler and Search Engine
 ### University of Costa Rica
 #### CI-2414 Information Retrieval
 ---
 ### note
-> The interface documentation is inside its own folder.
+> The interface documentation is inside its own folder (/interface).
 
 # Installation:
 ### Debian-based OS
