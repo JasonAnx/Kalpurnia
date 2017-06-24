@@ -20,7 +20,7 @@ import json
 from cassandra.cluster import Cluster
 from cassandra import DriverException
 
-
+import sys
 from bs4 import BeautifulSoup
 from langdetect import detect  # used to detect the page language
 # # from nltk import tokenize
@@ -65,8 +65,16 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         #    os.remove(f)
         # dispatcher.connect(self.SpiderKilled, signals.spider_closed)
         self.link_extractor = LinkExtractor()
-        self.cluster = Cluster(['127.0.0.1'])
-        self.session = self.cluster.connect('test')
+        self.cluster = Cluster(['10.1.101.40', '10.1.101.41', '10.1.101.42'])
+
+        try:
+            clusterName = 'proybasesii'
+            self.session = self.cluster.connect(  clusterName  )
+        except Exception as excp:
+            print( "Could not connect to cluster",clusterName )
+            print("Error:")
+            sys.exit(1)
+        
 
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -126,14 +134,6 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         tupla = { "docid": (docID), "docurl": docURL, "title":  docTitle} 
         self.URLsDiccc[docURL] = 1
 
-        try:
-            query = "INSERT INTO test.urls JSON  '{}' IF NOT EXISTS;".format( json.dumps( tupla ) )
-            self.session.execute(query)
-        except Exception as excp:
-            print("=======================")
-            print(query)
-            print(excp)
-
         # content = response.css('#content')
 
         # taken from 
@@ -169,9 +169,11 @@ class KalpurniaEmotionSpider(scrapy.Spider):
                 # increment the term frecuency
                 self.termDiccc[stemmedword][docID] += 1
         # --------------------------
-        try:
-            tupla = {"docid":docID, "palabras":docterms}
-            query = " INSERT INTO frecpalabras JSON '{}' IF NOT EXISTS;".format( json.dumps( tupla ) )
+        try:            
+            query = "INSERT INTO urls JSON  '{}' IF NOT EXISTS;".format( json.dumps( tupla ) )
+            self.session.execute(query)
+            tuplaDocterms = {"docid":docID, "palabras":docterms}
+            query = " INSERT INTO frecpalabras JSON '{}' IF NOT EXISTS;".format( json.dumps( tuplaDocterms ) )
             self.session.execute(query)
         except Exception as excp:
             print("=======================")

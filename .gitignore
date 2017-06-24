@@ -1,4 +1,4 @@
 *.pyc
 *.pyo
 *.json
-webSearch/.scrapy/httpcache/*
+Kalpurnia/.scrapy/httpcache/*

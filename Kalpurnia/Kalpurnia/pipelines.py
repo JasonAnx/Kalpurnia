@@ -6,7 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import json
-import pymongo
+# import pymongo
 from Kalpurnia.items import Url, Posting
 from scrapy.exceptions import CloseSpider
 from scrapy.conf import settings # settings.py, to access database config variables
@@ -16,14 +16,15 @@ from scrapy.exceptions import DropItem
 class KalpurniaPipeline(object):
     
     def __init__(self):
-        connection = pymongo.MongoClient(
-            settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
-        )
-        db = connection[settings['MONGODB_DB']]
-        self.urlsDB = db[settings['MONGODB_COLLECTION_URLS']]
-        self.ptgsDB = db[settings['MONGODB_COLLECTION_PTGS']]
-        print("\nDatabases Up and Running")
+        # connection = pymongo.MongoClient(
+        #     settings['MONGODB_SERVER'],
+        #     settings['MONGODB_PORT']
+        # )
+        # db = connection[settings['MONGODB_DB']]
+        # self.urlsDB = db[settings['MONGODB_COLLECTION_URLS']]
+        # self.ptgsDB = db[settings['MONGODB_COLLECTION_PTGS']]
+        # print("\nDatabases Up and Running")
+        pass
         
         # for x in self.collection.find():
         #     print( x['url'] )

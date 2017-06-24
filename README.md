@@ -44,6 +44,7 @@ To run a spider, use
     scrapy crawl __Spider_Name__ --nolog
 
 You can list all available spiders in the current project by running ```scrapy list``` on the project folder (where the scrapy.cfg file is located)
+[scrapy commands](https://doc.scrapy.org/en/latest/topics/commands.html)
 
 
 ##### Update (Dec 4, 2016): 
