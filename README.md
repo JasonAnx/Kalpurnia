@@ -5,12 +5,26 @@
 #### CI-2414 Information Retrieval
 ---
 ### note
-> The interface documentation is inside its own folder (/interface).
+> The interface documentation is inside its own folder (/interface). 
 
 # Installation:
 ### Debian-based OS
 
-Install Kalpurnia dependencies and Apache
+Install Kalpurnia dependencies using pip (you need python3)
+ 
+```bash
+sudo apt install python3-pip
+sudo apt install libssl-dev
+
+sudo pip3 install --upgrade pip # else, scrapy will fail to install
+sudo pip3 install scrapy
+sudo pip3 install langdetect
+sudo pip3 install beautifulsoup4
+sudo pip3 install langdetect
+sudo pip3 install cassandra-driver
+```
+
+and Apache
 
     sudo apt -y install  apache2 php libapache2-mod-php aspell-en php-pspell
 And restart apache 
@@ -19,18 +33,17 @@ And restart apache
 
 After installing apache, clone this repository into `/var/www/html/`
 
+<!--
 install mongodb
-
-    sudo apt install mongodb
- 
-and then, use pip to install Scrapy
- 
-    sudo apt install python3-pip
-    sudo apt install libssl-dev
-    sudo pip3 install --upgrade pip # else, scrapy will fail to install
-    sudo pip3 install scrapy
     sudo pip3 install pymongo
-    sudo pip3 install langdetect
+    sudo apt install mongodb
+-->
+
+To run a spider, use
+
+    scrapy crawl __Spider_Name__ --nolog
+
+You can list all available spiders in the current project by running ```scrapy list``` on the project folder (where the scrapy.cfg file is located)
 
 
 ##### Update (Dec 4, 2016): 
@@ -41,8 +54,6 @@ and then, use pip to install Scrapy
 
 In order to use the new spider, you will also need to install [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and NLTK. [langdetect](https://pypi.python.org/pypi/langdetect) 
 
-    sudo pip3 install beautifulsoup4 
-    sudo pip3 install langdetect
     sudo pip3 install nltk
     
 Before running the spider, and since the sentiment analysis approach used is machine learning, you must first download the NLTK training datasets. Open the Python3 console and run 
@@ -52,10 +63,6 @@ Before running the spider, and since the sentiment analysis approach used is mac
     nltk.download('punkt')
     nltk.download('vader_lexicon')
 and exit the console.
-
-To run this spider, use
-
-    scrapy crawl KalpurniaCrawlerSentiment --nolog
 
 
 ## Install (Arch Linux) 
