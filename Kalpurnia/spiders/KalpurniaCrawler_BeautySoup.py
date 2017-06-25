@@ -7,7 +7,7 @@ from math import log10
 from scrapy import Request
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
-from ..stemming.porter2 import stem
+from Kalpurnia.stemming.porter2 import stem
 from Kalpurnia.items import Url, Posting
 from scrapy.linkextractors import LinkExtractor  #self.link_extractor = LinkExtractor()
 import scrapy.exceptions
@@ -17,6 +17,7 @@ import time  # sleep ( n secons )
 import json
 from bs4 import BeautifulSoup
 from langdetect import detect  # used to detect the page language
+import re
 
 
 
@@ -39,7 +40,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
 
     name = "KalpurniaCrawler_BeautySoup"
 
-    allowed_domains = ["www.nacion.com"]
+    allowed_domains = ["localhost"]
 
     URLsDiccc = {}
     sentcsDiccc = {}
@@ -48,7 +49,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
 
     # DicccEntry = namedtuple('DicccEntry', 'termFrec pList')
 
-    start_urls = ['http://www.nacion.com', ]
+    start_urls = ['http://localhost/', ]
 
     def __init__(self, **kw):
         print("Spider running")
@@ -101,7 +102,7 @@ class KalpurniaEmotionSpider(scrapy.Spider):
         docText = docText.get_text()
 
         language = detect(docText)
-        if language != 'es':
+        if language != 'en':
             print("\nIgnored document %s\n. Detected lang %s" %
                   (response.url, language))
             return
